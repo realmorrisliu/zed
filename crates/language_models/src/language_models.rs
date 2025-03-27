@@ -5,6 +5,7 @@ use fs::Fs;
 use gpui::{App, Context, Entity};
 use language_model::{LanguageModelProviderId, LanguageModelRegistry, ZED_CLOUD_PROVIDER_ID};
 use provider::deepseek::DeepSeekLanguageModelProvider;
+use provider::openrouter::OpenRouterLanguageModelProvider;
 
 pub mod provider;
 mod settings;
@@ -70,6 +71,10 @@ fn register_language_model_providers(
         cx,
     );
     registry.register_provider(CopilotChatLanguageModelProvider::new(cx), cx);
+    registry.register_provider(
+        OpenRouterLanguageModelProvider::new(client.http_client(), cx),
+        cx,
+    );
 
     cx.observe_flag::<feature_flags::LanguageModels, _>(move |enabled, cx| {
         let user_store = user_store.clone();

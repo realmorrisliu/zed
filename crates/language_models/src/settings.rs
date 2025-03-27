@@ -20,6 +20,7 @@ use crate::provider::{
     mistral::MistralSettings,
     ollama::OllamaSettings,
     open_ai::OpenAiSettings,
+    openrouter::OpenRouterSettings,
 };
 
 /// Initializes the language model settings.
@@ -67,6 +68,7 @@ pub struct AllLanguageModelSettings {
     pub lmstudio: LmStudioSettings,
     pub deepseek: DeepSeekSettings,
     pub mistral: MistralSettings,
+    pub openrouter: OpenRouterSettings,
 }
 
 #[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq, JsonSchema)]
@@ -81,6 +83,7 @@ pub struct AllLanguageModelSettingsContent {
     pub deepseek: Option<DeepseekSettingsContent>,
     pub copilot_chat: Option<CopilotChatSettingsContent>,
     pub mistral: Option<MistralSettingsContent>,
+    pub openrouter: Option<OpenRouterSettingsContent>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, JsonSchema)]
@@ -182,6 +185,12 @@ pub struct DeepseekSettingsContent {
 pub struct MistralSettingsContent {
     pub api_url: Option<String>,
     pub available_models: Option<Vec<provider::mistral::AvailableModel>>,
+}
+
+#[derive(Default, Clone, Debug, Serialize, Deserialize, PartialEq, JsonSchema)]
+pub struct OpenRouterSettingsContent {
+    pub api_url: Option<String>,
+    pub available_models: Option<Vec<provider::openrouter::AvailableModel>>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, JsonSchema)]
@@ -379,6 +388,17 @@ impl settings::Settings for AllLanguageModelSettings {
             merge(
                 &mut settings.mistral.available_models,
                 mistral.as_ref().and_then(|s| s.available_models.clone()),
+            );
+
+            // OpenRouter
+            let openrouter = value.openrouter.clone();
+            merge(
+                &mut settings.openrouter.api_url,
+                openrouter.as_ref().and_then(|s| s.api_url.clone()),
+            );
+            merge(
+                &mut settings.openrouter.available_models,
+                openrouter.as_ref().and_then(|s| s.available_models.clone()),
             );
         }
 
